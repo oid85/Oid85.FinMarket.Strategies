@@ -4,6 +4,13 @@ import modules.data_loader as dl
 
 
 class SmaCrossClosePrice(bt.Strategy):
+    config = {
+        'Name': 'SmaCrossClosePrice',
+        'Key': '0e3d2fee-3eaa-4e87-8ae2-e09a94d04c6b',
+        'TimeFrame': 'D',
+        'Enable': False
+    }
+
     params = (
         ('Period', 26),
         ('EnableLog ', False)
