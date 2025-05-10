@@ -15,7 +15,7 @@ class SmaCrossClosePrice(bt.Strategy):
             print(f'{dt.isoformat()}, {txt}')
 
     def __init__(self):
-        self.DataClose = self.datas[0].close
+        self.ClosePrices = self.datas[0].close
         self.Order = None
         self.Sma = bt.indicators.SimpleMovingAverage(self.datas[0], period=self.p.SMAPeriod)
         self.StartMoney = self.broker.getValue()
@@ -39,17 +39,18 @@ class SmaCrossClosePrice(bt.Strategy):
         self.log(f'Trade PnL = {trade.pnl:.2f}, Net = {trade.pnlcomm:.2f}')
 
     def next(self):
-        self.log(f'Close={self.DataClose[0]:.2f}')
+        self.log(f'Close={self.ClosePrices[0]:.2f}')
         if self.Order: # есть неисполненная заявка
             return
 
         if not self.position: # позиции нет
-            signal_buy = self.DataClose[0] > self.Sma[0]
+            signal_buy = self.ClosePrices[0] > self.Sma[0]
             if signal_buy:
                 self.log('Buy')
                 self.Order = self.buy()
+
         else: # позиция есть
-            signal_sell = self.DataClose[0] < self.Sma[0]
+            signal_sell = self.ClosePrices[0] < self.Sma[0]
             if signal_sell:
                 self.log('Sell')
                 self.Order = self.sell()
