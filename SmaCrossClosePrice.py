@@ -1,5 +1,6 @@
 from datetime import datetime
 import backtrader as bt
+import modules.data_loader as dl
 
 
 class SmaCrossClosePrice(bt.Strategy):
@@ -59,14 +60,12 @@ class SmaCrossClosePrice(bt.Strategy):
 
 cerebro = bt.Cerebro()
 cerebro.optstrategy(SmaCrossClosePrice, Period=range(10, 50))
-data = {}
-
+data = dl.get_daily_candles_by_ticker('SBER', '2020-01-01', '2025-12-31')
 cerebro.adddata(data)
 cerebro.broker.setcash(1000000)
 cerebro.addsizer(bt.sizers.SizerFix, stake=10)
 cerebro.broker.setcommission(commission=0.001)
 cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='TradeAnalyzer')
-print('Результат:')
 results = cerebro.run()
 stats = {}
 for result in results:
