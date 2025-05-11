@@ -3,7 +3,8 @@ from TestStrategy import TestStrategy
 
 cerebro = bt.Cerebro()
 cerebro.optstrategy(TestStrategy, Period=range(10, 50))
-data = bt.feeds.PostgresData('SBER', '2025-01-01', '2025-12-31')
+df = dl.get_daily_candles_by_ticker('SBER', '2025-01-01', '2025-12-31')
+data = bt.feeds.PandasData(dataname=df)
 cerebro.adddata(data)
 cerebro.broker.setcash(1000000)
 cerebro.addsizer(bt.sizers.SizerFix, stake=10)
