@@ -8,7 +8,7 @@ if __name__ == '__main__':
     df = dm.get_daily_candles_by_ticker('SBER', '2024-01-01', '2025-12-31')
     data = bt.feeds.PandasData(dataname=df, datetime=0, open=1, high=2, low=3, close=4, volume=5, openinterest=-1)
     cerebro.adddata(data)
-    strats = cerebro.optstrategy(TestStrategy, maperiod=range(10, 30), logging=False)
+    cerebro.optstrategy(TestStrategy, maperiod=range(10, 30), logging=False)
     cerebro.addsizer(bt.sizers.FixedSize,stake=10)
     cerebro.broker.setcash(1000000.0)
     cerebro.broker.setcommission(commission=0.0)
