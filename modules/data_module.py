@@ -9,7 +9,7 @@ def get_daily_candles_by_ticker(ticker, start_date, end_date):
                             database=config.database,
                             user=config.user,
                             password=config.password)
-    sql = (f"select date as datetime, open, high, low, close, volume, 0 as openinterest "
+    sql = (f"select date as datetime, open, high, low, close, volume "
            f"from storage.daily_candles "
            f"where instrument_id in (select instrument_id from public.instruments where ticker = '{ticker}') "
            f"and date >= '{start_date}' "

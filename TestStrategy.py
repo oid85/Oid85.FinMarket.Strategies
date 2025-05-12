@@ -2,28 +2,20 @@ import backtrader as bt
 
 
 class TestStrategy(bt.Strategy):
-    config = {
-        'Name': 'TestStrategy',
-        'Key': '0e3d2fee-3eaa-4e87-8ae2-e09a94d04c6b',
-        'TimeFrame': 'D',
-        'Enable': False
-    }
-
     params = (
-        ('Period', 26),
-        ('EnableLog ', False)
+        ('maperiod', 15),
+        ('logging', False)
     )
 
-    def log(self, txt, dt=None, enable_log=False):
-        if self.p.EnableLog or enable_log:
-            dt = dt or self.datas[0].datetime.date(0)
-            print(f'{dt.isoformat()}, {txt}')
-
     def __init__(self):
-        self.ClosePrices = self.datas[0].close
-        self.Order = None
-        self.Sma = bt.indicators.SimpleMovingAverage(self.datas[0], period=self.p.SMAPeriod)
-        self.StartMoney = self.broker.getValue()
+        self.dataclose = self.datas[0].close
+        self.order = None
+        self.sma = bt.indicators.SimpleMovingAverage(self.datas[0], period=self.params.maperiod)
+
+    def log(self, message, dt=None, logging=False):
+        if self.params.logging or logging:
+            dt = dt or self.datas[0].datetime.date(0)
+            print('{0},{1}'.format(dt.isoformat(), message))
 
     def notify_order(self, order):
         if order.status in [order.Submitted, order.Accepted]:
@@ -31,34 +23,38 @@ class TestStrategy(bt.Strategy):
 
         if order.status in [order.Completed]:
             if order.isbuy():
-                self.log(f'Bought @{order.executed.price:.2f}, Cost={order.executed.value:.2f}, Comm={order.executed.comm:.2f}')
-            elif order.issell():
-                self.log(f'Sold @{order.executed.price:.2f}, Cost={order.executed.value:.2f}, Comm={order.executed.comm:.2f}')
+                self.log('BUY EXECUTED, Price: {0:8.2f}, Size: {1:8.2f} Cost: {2:8.2f}, Comm: {3:8.2f}'.format(
+                    order.executed.price, order.executed.size, order.executed.value,order.executed.comm))
+
+            else:
+                self.log('SELL EXECUTED, {0:8.2f}, Size: {1:8.2f} Cost: {2:8.2f}, Comm{3:8.2f}'.format(
+                    order.executed.price, order.executed.size, order.executed.value, order.executed.comm))
+
         elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-            self.log(f'Order {order.status}')
-        self.Order = None
+            self.log('Order Canceled/Margin/Rejected')
+
+        self.order = None
 
     def notify_trade(self, trade):
-        if not trade.isclosed: # позиция не закрыта
+        if not trade.isclosed:
             return
-        self.log(f'Trade PnL = {trade.pnl:.2f}, Net = {trade.pnlcomm:.2f}')
+
+        self.log('OPERATION PROFIT, GROSS {0:8.2f}, NET {1:8.2f}'.format(trade.pnl, trade.pnlcomm))
 
     def next(self):
-        self.log(f'Close={self.ClosePrices[0]:.2f}')
-        if self.Order: # есть неисполненная заявка
+        self.log('Close, {0:8.2f}'.format(self.dataclose[0]))
+
+        if self.order:
             return
 
-        if not self.position: # позиции нет
-            signal_buy = self.ClosePrices[0] > self.Sma[0]
-            if signal_buy:
-                self.log('Buy')
-                self.Order = self.buy()
+        if not self.position:
+            if self.dataclose[0] > self.sma[0]:
+                self.order = self.buy()
 
-        else: # позиция есть
-            signal_sell = self.ClosePrices[0] < self.Sma[0]
-            if signal_sell:
-                self.log('Sell')
-                self.Order = self.sell()
+        else:
+            if self.dataclose[0] < self.sma[0]:
+                self.order = self.sell()
 
     def stop(self):
-        self.log(f'Money = {(self.broker.getValue() - self.StartMoney):.2f}', enable_log=True)
+        self.log('MA Period: {0:8.2f} Ending Value: {1:8.2f}'.format(
+            self.params.maperiod, self.broker.getvalue()), logging=True)
