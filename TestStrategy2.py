@@ -1,7 +1,7 @@
 import backtrader as bt
 
 
-class TestStrategy(bt.Strategy):
+class TestStrategy2(bt.Strategy):
     params = (
         ('maperiod', 15),
         ('logging', False)
@@ -15,7 +15,7 @@ class TestStrategy(bt.Strategy):
     def log(self, message, dt=None, logging=False):
         if self.params.logging or logging:
             dt = dt or self.datas[0].datetime.date(0)
-            print('{0},TestStrategy,{1}'.format(dt.isoformat(), message))
+            print('{0},TestStrategy2,{1}'.format(dt.isoformat(), message))
 
     def notify_order(self, order):
         if order.status in [order.Submitted, order.Accepted]:
@@ -56,5 +56,5 @@ class TestStrategy(bt.Strategy):
                 self.order = self.sell()
 
     def stop(self):
-        self.log('TestStrategy. MA Period: {0:8.2f} Ending Value: {1:8.2f}'.format(
+        self.log('TestStrategy2. MA Period: {0:8.2f} Ending Value: {1:8.2f}'.format(
             self.params.maperiod, self.broker.getvalue()), logging=True)
