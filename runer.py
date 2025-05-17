@@ -2,10 +2,10 @@ import backtrader as bt
 import modules.data_module as dm
 import config
 
-from strategies.CrossSmaClose import CrossSmaClose
+from strategies.CrossSmaClose_Long_D import CrossSmaClose_Long_D
 
 strategies = {
-    CrossSmaClose: { 'period': 15, 'logging': False }
+    CrossSmaClose_Long_D: {'period': 15, 'logging': False}
 }
 
 if __name__ == '__main__':

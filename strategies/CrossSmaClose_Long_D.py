@@ -1,10 +1,11 @@
 import backtrader as bt
 
 
-class CrossSmaClose(bt.Strategy):
+class CrossSmaClose_Long_D(bt.Strategy):
     settings = (
         ('id', '208e13f2-7609-4d5c-832e-71fa75319c22'),
-        ('ver', 1)
+        ('version', 1),
+        ('timeframe', 'D')
     )
 
     params = (
@@ -13,7 +14,7 @@ class CrossSmaClose(bt.Strategy):
     )
 
     def __init__(self):
-        self.dataclose = self.datas[0].close
+        self.close_prices = self.datas[0].close
         self.order = None
         self.sma = bt.indicators.SimpleMovingAverage(self.datas[0], period=self.params.period)
 
@@ -28,38 +29,27 @@ class CrossSmaClose(bt.Strategy):
 
         if order.status in [order.Completed]:
             if order.isbuy():
-                self.log('BUY EXECUTED, Price: {0:8.2f}, Size: {1:8.2f} Cost: {2:8.2f}, Comm: {3:8.2f}'.format(
-                    order.executed.price, order.executed.size, order.executed.value,order.executed.comm))
+                self.log(f'LONG - PRICE: {order.executed.price} SIZE: {order.executed.size} COST: {order.executed.value} COMM: {order.executed.comm}')
 
             else:
-                self.log('SELL EXECUTED, {0:8.2f}, Size: {1:8.2f} Cost: {2:8.2f}, Comm{3:8.2f}'.format(
-                    order.executed.price, order.executed.size, order.executed.value, order.executed.comm))
+                self.log(f'SHORT - PRICE: {order.executed.price} SIZE: {order.executed.size} COST: {order.executed.value} COMM: {order.executed.comm}')
 
         elif order.status in [order.Canceled, order.Margin, order.Rejected]:
             self.log('Order Canceled/Margin/Rejected')
 
         self.order = None
 
-    def notify_trade(self, trade):
-        if not trade.isclosed:
-            return
-
-        self.log('OPERATION PROFIT, GROSS {0:8.2f}, NET {1:8.2f}'.format(trade.pnl, trade.pnlcomm))
-
     def next(self):
-        self.log('Close, {0:8.2f}'.format(self.dataclose[0]))
-
         if self.order:
             return
 
+        signal_open_long_position = self.close_prices[0] > self.sma[0]
+        signal_close_long_position = self.close_prices[0] < self.sma[0]
+
         if not self.position:
-            if self.dataclose[0] > self.sma[0]:
+            if signal_open_long_position:
                 self.order = self.buy()
 
         else:
-            if self.dataclose[0] < self.sma[0]:
+            if signal_close_long_position:
                 self.order = self.sell()
-
-    def stop(self):
-        self.log('TestStrategy. MA Period: {0:8.2f} Ending Value: {1:8.2f}'.format(
-            self.params.period, self.broker.getvalue()), logging=True)
