@@ -2,15 +2,20 @@ import backtrader as bt
 
 
 class CrossSmaClose(bt.Strategy):
+    settings = (
+        ('id', '208e13f2-7609-4d5c-832e-71fa75319c22'),
+        ('ver', 1)
+    )
+
     params = (
-        ('maperiod', 15),
+        ('period', 15),
         ('logging', False)
     )
 
     def __init__(self):
         self.dataclose = self.datas[0].close
         self.order = None
-        self.sma = bt.indicators.SimpleMovingAverage(self.datas[0], period=self.params.maperiod)
+        self.sma = bt.indicators.SimpleMovingAverage(self.datas[0], period=self.params.period)
 
     def log(self, message, dt=None, logging=False):
         if self.params.logging or logging:
@@ -57,4 +62,4 @@ class CrossSmaClose(bt.Strategy):
 
     def stop(self):
         self.log('TestStrategy. MA Period: {0:8.2f} Ending Value: {1:8.2f}'.format(
-            self.params.maperiod, self.broker.getvalue()), logging=True)
+            self.params.period, self.broker.getvalue()), logging=True)
