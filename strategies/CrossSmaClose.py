@@ -1,7 +1,7 @@
 import backtrader as bt
 
 
-class TestStrategy(bt.Strategy):
+class CrossSmaClose(bt.Strategy):
     params = (
         ('maperiod', 15),
         ('logging', False)

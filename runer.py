@@ -2,7 +2,7 @@ import backtrader as bt
 import modules.data_module as dm
 import config
 
-from strategies.TestStrategy import TestStrategy
+from strategies.CrossSmaClose import CrossSmaClose
 
 if __name__ == '__main__':
     for ticker in config.tickers:
@@ -10,7 +10,7 @@ if __name__ == '__main__':
         df = dm.get_daily_candles_by_ticker(ticker, config.start_date, config.end_date)
         data = bt.feeds.PandasData(dataname=df, datetime=0, open=1, high=2, low=3, close=4, volume=5, openinterest=-1)
         cerebro.adddata(data)
-        cerebro.addstrategy(TestStrategy, maperiod=15, logging=False)
+        cerebro.addstrategy(CrossSmaClose, maperiod=15, logging=False)
         cerebro.addsizer(bt.sizers.PercentSizer, percents=50)
         cerebro.broker.setcash(1000000.0)
         cerebro.broker.setcommission(commission=0.0)
