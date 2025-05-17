@@ -11,7 +11,7 @@ if __name__ == '__main__':
         data = bt.feeds.PandasData(dataname=df, datetime=0, open=1, high=2, low=3, close=4, volume=5, openinterest=-1)
         cerebro.adddata(data)
         cerebro.addstrategy(TestStrategy, maperiod=15, logging=False)
-        cerebro.addsizer(bt.sizers.FixedSize,stake=1)
+        cerebro.addsizer(bt.sizers.PercentSizer, percents=50)
         cerebro.broker.setcash(1000000.0)
         cerebro.broker.setcommission(commission=0.0)
         print(ticker)
