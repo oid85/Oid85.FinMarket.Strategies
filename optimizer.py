@@ -8,6 +8,8 @@ strategies = {
     CrossSmaClose_Long_D: {'period': range(10, 50, 5), 'logging': False}
 }
 
+dm.clear_optimization_result()
+
 if __name__ == '__main__':
     for ticker in config.tickers:
         for strategy, params in strategies.items():
@@ -23,3 +25,4 @@ if __name__ == '__main__':
             engine.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
             engine.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
             results = engine.run(maxcpus=1)
+            dm.save_optimization_result(ticker, strategy.settings, results)

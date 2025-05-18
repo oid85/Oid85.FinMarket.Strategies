@@ -4,9 +4,7 @@ import config
 
 from strategies.CrossSmaClose_Long_D import CrossSmaClose_Long_D
 
-strategies = {
-    CrossSmaClose_Long_D: {'period': 15, 'logging': False}
-}
+strategies = dm.get_backtest_strategies()
 
 if __name__ == '__main__':
     for ticker in config.tickers:
@@ -30,4 +28,5 @@ if __name__ == '__main__':
             print(f'Sharpe Ratio: {sharpe["sharperatio"]}')
             print(f'Max Drawdown: {drawdown["max"]["drawdown"]}')
             print(f'Total Trades: {trades.total.total}')
-            #cerebro.plot()
+
+dm.calculate_positions()
