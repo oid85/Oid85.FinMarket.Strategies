@@ -1,7 +1,9 @@
-host     = '26.147.25.39'
-port     = 5432
+from strategies.CrossSmaClose_Long_D import CrossSmaClose_Long_D
+
+host = '26.147.25.39'
+port = 5432
 database = 'finmarket_prod'
-user     = 'postgres'
+user = 'postgres'
 password = 'postgres'
 
 start_date = '2022-01-01'
@@ -9,6 +11,12 @@ end_date = '2024-12-31'
 
 out_start_date = '2024-01-01'
 out_end_date = '2025-12-31'
+
+cash = 1000000.0
+
+strategies = {
+    CrossSmaClose_Long_D: {'period': range(10, 50, 5), 'logging': False}
+}
 
 tickers = [
     "CBOM",

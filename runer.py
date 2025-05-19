@@ -2,9 +2,8 @@ import backtrader as bt
 import modules.data_module as dm
 import config
 
-from strategies.CrossSmaClose_Long_D import CrossSmaClose_Long_D
-
 strategies = dm.get_backtest_strategies()
+dm.clear_backtest_result()
 
 if __name__ == '__main__':
     for ticker in config.tickers:
@@ -21,12 +20,5 @@ if __name__ == '__main__':
             engine.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
             engine.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
             results = engine.run(maxcpus=1)
-            sharpe = results[0].analyzers.sharpe.get_analysis()
-            drawdown = results[0].analyzers.drawdown.get_analysis()
-            trades = results[0].analyzers.trades.get_analysis()
-
-            print(f'Sharpe Ratio: {sharpe["sharperatio"]}')
-            print(f'Max Drawdown: {drawdown["max"]["drawdown"]}')
-            print(f'Total Trades: {trades.total.total}')
 
 dm.calculate_positions()
