@@ -24,4 +24,5 @@ if __name__ == '__main__':
         result = engine.run(maxcpus=1)
         dm.save_backtest_results(strategy_data['ticker'], strategy_data['strategy'].settings, [result])
 
-dm.calculate_positions()
+dm.clear_strategy_signals()
+dm.save_strategy_signals()

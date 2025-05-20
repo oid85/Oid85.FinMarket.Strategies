@@ -1,7 +1,7 @@
 import backtrader as bt
 
 
-class CrossSmaClose_Long_D(bt.Strategy):
+class CloseCrossSma_Long_D(bt.Strategy):
     settings = {
         'id': '208e13f2-7609-4d5c-832e-71fa75319c22',
         'version': 1,

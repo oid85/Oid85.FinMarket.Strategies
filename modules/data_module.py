@@ -50,6 +50,29 @@ def clear_backtest_result():
     connection.close()
 
 
+def clear_strategy_signals():
+    '''Очищение таблицы позиций'''
+    connection = get_database_connection()
+    cursor = connection.cursor()
+
+    sql = 'delete from storage.strategy_signals'
+    cursor.execute(sql)
+    connection.commit()
+
+    datetime_now = datetime.datetime.now().isoformat()
+    datetime_min = datetime.datetime(1, 1, 1, 0, 0, 0).isoformat()
+
+    for ticker in config.tickers:
+        sql = (f"insert into storage.strategy_signals ("
+               f"ticker, position, created_at, updated_at, deleted_at, is_deleted) "
+               f"values('{ticker}', 0, '{datetime_now}', '{datetime_min}', '{datetime_min}', false)")
+        cursor.execute(sql)
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+
 def get_good_optimization_results():
     connection = get_database_connection()
 
@@ -150,6 +173,18 @@ def get_backtest_strategies():
 
     return backtest_strategies
 
-def calculate_positions():
-    '''Расчет позиций инструментов на основе данных бэектеста'''
-    return None
+
+def save_strategy_signals():
+    '''Расчет позиций инструментов на основе данных бэктеста'''
+    connection = get_database_connection()
+    cursor = connection.cursor()
+
+    for ticker in config.tickers:
+        cursor.execute(
+            f"update storage.strategy_signals "
+            f"set position = coalesce((select sum(total_open) from storage.backtest_results where ticker = '{ticker}'), 0) "
+            f"where ticker = '{ticker}'")
+
+    connection.commit()
+    cursor.close()
+    connection.close()
