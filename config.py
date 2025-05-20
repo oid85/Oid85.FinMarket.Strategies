@@ -12,7 +12,15 @@ end_date = '2024-12-31'
 out_start_date = '2024-01-01'
 out_end_date = '2025-12-31'
 
-cash = 1000000.0
+strategy_money = 1000000.0
+percent_size = 50
+
+optimization_result_filter = {
+    'sharp_ratio': 2.0,
+    'profit_factor': 2.0,
+    'recovery_factor': 2.0,
+    'max_drawdown_percent': 20.0,
+}
 
 strategies = {
     CrossSmaClose_Long_D: {'period': range(10, 50, 5), 'logging': False}

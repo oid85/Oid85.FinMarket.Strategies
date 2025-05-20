@@ -4,7 +4,8 @@ import psycopg2 as ps
 import pandas as pd
 import config
 import hashlib
-
+import warnings
+warnings.simplefilter(action='ignore', category=UserWarning)
 
 def get_database_connection():
     return ps.connect(host=config.host, port=config.port, database=config.database, user=config.user, password=config.password)
@@ -49,27 +50,24 @@ def clear_backtest_result():
     connection.close()
 
 
-def is_exists_optimization_result(ticker, settings, strategy_params_hash):
+def get_good_optimization_results():
     connection = get_database_connection()
 
-    strategy_version = settings['version']
-    strategy_id = settings['id']
-    strategy_timeframe = settings['timeframe']
-
-    sql = (f"select strategy_params from storage.optimization_results " 
-           f"where strategy_id = '{strategy_id}' " 
-           f"and ticker = '{ticker}' "
-           f"and strategy_version = {strategy_version} "
-           f"and timeframe = '{strategy_timeframe}' "
-           f"and strategy_params_hash = '{strategy_params_hash}'")
+    sql = (f"select id, ticker, strategy_id, strategy_params, "
+           f"sharp_ratio, profit_factor, recovery_factor, max_drawdown_percent "
+           f"from storage.optimization_results " 
+           f"where sharp_ratio >= {config.optimization_result_filter['sharp_ratio']} " 
+           f"and profit_factor >= {config.optimization_result_filter['profit_factor']} " 
+           f"and recovery_factor >= {config.optimization_result_filter['recovery_factor']} " 
+           f"and max_drawdown_percent <= {config.optimization_result_filter['max_drawdown_percent']}")
 
     df = pd.read_sql(sql, con=connection)
     connection.close()
 
-    return len(df) > 0
+    return df
 
 
-def save_optimization_result(ticker, settings, results):
+def save_results(ticker, settings, results, table_name):
     '''Сохранение результатов оптимизации'''
     connection = get_database_connection()
     cursor = connection.cursor()
@@ -100,30 +98,17 @@ def save_optimization_result(ticker, settings, results):
             datetime_now = datetime.datetime.now().isoformat()
             datetime_min = datetime.datetime(1, 1, 1, 0, 0, 0).isoformat()
 
-            is_exists = is_exists_optimization_result(ticker, settings, strategy_params_hash)
-
-            if is_exists:
-                sql = (f"update storage.optimization_results "
-                       f"set "
-                       f"total={total}, total_open={total_open}, total_closed={total_closed}, "
-                       f"streak_won_longest={streak_won_longest}, streak_lost_longest={streak_lost_longest}, "
-                       f"pnl_net_total={pnl_net_total}, pnl_net_average={pnl_net_average}, "
-                       f"max_drawdown_percent={max_drawdown_percent}, profit_factor={profit_factor}, "
-                       f"recovery_factor={recovery_factor}, sharp_ratio={sharp_ratio}, updated_at='{datetime_now}' "                   
-                       f"where strategy_id='{strategy_id}' "
-                       f"and  strategy_version={strategy_version} and  strategy_params_hash='{strategy_params_hash}'")
-            else:
-                sql = (f"insert into storage.optimization_results ("
-                       f"ticker, timeframe, strategy_id, strategy_version, "
-                       f"strategy_params, strategy_params_hash, total, total_open, total_closed, "
-                       f"streak_won_longest, streak_lost_longest, pnl_net_total, pnl_net_average, "
-                       f"max_drawdown_percent, profit_factor, recovery_factor, sharp_ratio, "
-                       f"created_at, updated_at, deleted_at, is_deleted) "
-                       f"values('{ticker}', '{strategy_timeframe}', '{strategy_id}', {strategy_version}, "
-                       f"'{strategy_params}', '{strategy_params_hash}', {total}, {total_open}, {total_closed}, "
-                       f"{streak_won_longest}, {streak_lost_longest}, {pnl_net_total}, {pnl_net_average}, "
-                       f"{max_drawdown_percent}, {profit_factor}, {recovery_factor}, {sharp_ratio}, "
-                       f"'{datetime_now}', '{datetime_min}', '{datetime_min}', false)")
+            sql = (f"insert into storage.{table_name} ("
+                   f"ticker, timeframe, strategy_id, strategy_version, "
+                   f"strategy_params, strategy_params_hash, total, total_open, total_closed, "
+                   f"streak_won_longest, streak_lost_longest, pnl_net_total, pnl_net_average, "
+                   f"max_drawdown_percent, profit_factor, recovery_factor, sharp_ratio, "
+                   f"created_at, updated_at, deleted_at, is_deleted) "
+                   f"values('{ticker}', '{strategy_timeframe}', '{strategy_id}', {strategy_version}, "
+                   f"'{strategy_params}', '{strategy_params_hash}', {total}, {total_open}, {total_closed}, "
+                   f"{streak_won_longest}, {streak_lost_longest}, {pnl_net_total}, {pnl_net_average}, "
+                   f"{max_drawdown_percent}, {profit_factor}, {recovery_factor}, {sharp_ratio}, "
+                   f"'{datetime_now}', '{datetime_min}', '{datetime_min}', false)")
 
             cursor.execute(sql)
 
@@ -135,10 +120,35 @@ def save_optimization_result(ticker, settings, results):
     connection.close()
 
 
-def get_backtest_strategies():
-    '''Получение стратегий для бэктеста'''
+def save_optimization_results(ticker, settings, results):
+    save_results(ticker, settings, results, 'optimization_results')
+
+
+def save_backtest_results(ticker, settings, results):
+    save_results(ticker, settings, results, 'backtest_results')
+
+
+def get_strategy_by_id(strategy_id):
+    for strategy in config.strategies.keys():
+        if strategy.settings['id'] == strategy_id:
+            return strategy
     return None
 
+
+def get_backtest_strategies():
+    '''Получение стратегий для бэктеста'''
+    backtest_strategies = {}
+
+    df = get_good_optimization_results()
+
+    for i, row in df.iterrows():
+        ticker = row['ticker']
+        strategy = get_strategy_by_id(row['strategy_id'])
+        params = row['strategy_params']
+        strategy_data = {'strategy': strategy, 'ticker': ticker, 'params': params}
+        backtest_strategies[row['id']] = strategy_data
+
+    return backtest_strategies
 
 def calculate_positions():
     '''Расчет позиций инструментов на основе данных бэектеста'''
