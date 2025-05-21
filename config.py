@@ -1,5 +1,6 @@
 from strategies.CloseCrossSma_Long_D import CloseCrossSma_Long_D
 from strategies.HmaInclination_Long_D.HmaInclination_Long_D import HmaInclination_Long_D
+from strategies.Supertrend_Long_D.Supertrend_Long_D import Supertrend_Long_D
 
 host = '26.147.25.39'
 port = 5432
@@ -25,7 +26,8 @@ optimization_result_filter = {
 
 strategies = {
     CloseCrossSma_Long_D: {'period': range(10, 50, 5), 'logging': False},
-    HmaInclination_Long_D: {'period': range(10, 50, 5), 'logging': False}
+    HmaInclination_Long_D: {'period': range(10, 50, 5), 'logging': False},
+    Supertrend_Long_D: {'period': range(10, 50, 5), multiplier=range(2.0, 3.0, 0.2), 'logging': False}
 }
 
 tickers = [

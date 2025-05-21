@@ -14,7 +14,7 @@ class CloseCrossSma_Long_D(bt.Strategy):
     )
 
     def __init__(self):
-        self.close_prices = self.datas[0].close
+        self.close = self.datas[0].close
         self.order = None
         self.sma = bt.indicators.SimpleMovingAverage(self.datas[0], period=self.params.period)
 
@@ -43,13 +43,13 @@ class CloseCrossSma_Long_D(bt.Strategy):
         if self.order:
             return
 
-        signal_open_long_position = self.close_prices[0] > self.sma[0]
-        signal_close_long_position = self.close_prices[0] < self.sma[0]
+        signal_open_long = self.close[0] > self.sma[0]
+        signal_open_long = self.close[0] < self.sma[0]
 
         if not self.position:
-            if signal_open_long_position:
+            if signal_open_long:
                 self.order = self.buy()
 
         else:
-            if signal_close_long_position:
+            if signal_open_long:
                 self.order = self.sell()

@@ -1,22 +1,25 @@
 import backtrader as bt
 
 
-class HmaInclination_Long_D(bt.Strategy):
+class Supertrend_Long_D(bt.Strategy):
     settings = {
-        'id': '41b8cba8-8d1b-4a42-867b-03e798d888ad',
+        'id': '1031b21c-1439-4a9c-aea3-f389039d157b',
         'version': 1,
         'timeframe': 'D'
     }
 
     params = (
         ('period', 15),
+        ('multiplier', 2.5),
         ('logging', False)
     )
 
     def __init__(self):
         self.close = self.datas[0].close
         self.order = None
-        self.hma = bt.indicators.HullMovingAverage(self.datas[0], period=self.params.period)
+        self.highest = bt.indicators.Highest(self.datas[0], period=self.params.period)
+        self.lowest = bt.indicators.Lowest(self.datas[0], period=self.params.period)
+        self.atr = bt.indicators.AverageTrueRange(self.datas[0], period=self.params.period)
 
     def log(self, message, dt=None, logging=False):
         if self.params.logging or logging:
@@ -43,8 +46,11 @@ class HmaInclination_Long_D(bt.Strategy):
         if self.order:
             return
 
-        signal_open_long = self.hma[-1] < self.hma[0]
-        signal_open_long = self.hma[-1] > self.hma[0]
+        up = (self.highest[0] + self.lowest[0]) / 2.0 + self.atr[0] * self.params.multiplier
+        down = (self.highest[0] + self.lowest[0]) / 2.0 - self.atr[0] * self.params.multiplier
+
+        signal_open_long = self.close[0] > down
+        signal_open_long = self.close[0] < down
 
         if not self.position:
             if signal_open_long:
