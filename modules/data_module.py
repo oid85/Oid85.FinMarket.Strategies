@@ -143,6 +143,37 @@ def save_results(ticker, settings, results, table_name):
     connection.close()
 
 
+def print_results(ticker, results):
+    '''Печать результатов оптимизации'''
+    for result in results:
+        try:
+            sharpe = result[0].analyzers.sharpe.get_analysis()
+            drawdown = result[0].analyzers.drawdown.get_analysis()
+            trades = result[0].analyzers.trades.get_analysis()
+            strategy_params = json.dumps(result[0].p._getkwargs())
+            total = trades.total.total
+            pnl_net_total = trades.pnl.net.total
+            pnl_net_average = trades.pnl.net.average
+            max_drawdown_percent = drawdown.max.drawdown
+            profit_factor = abs(trades.won.pnl.total / trades.lost.pnl.total)
+            recovery_factor = trades.pnl.net.total / drawdown.max.moneydown
+            sharp_ratio = sharpe['sharperatio']
+
+            message = (f"'{ticker}' '{strategy_params}' "
+                       f"total={total} "
+                       f"pnl_net_total={round(pnl_net_total, 2)} "
+                       f"pnl_net_average={round(pnl_net_average, 2)} "
+                       f"max_drawdown_percent={round(max_drawdown_percent, 2)} "
+                       f"profit_factor={round(profit_factor, 2)} "
+                       f"recovery_factor={round(recovery_factor, 2)} "
+                       f"sharp_ratio={round(sharp_ratio, 2)}")
+
+            print(message)
+
+        except:
+            pass
+
+
 def save_optimization_results(ticker, settings, results):
     save_results(ticker, settings, results, 'optimization_results')
 

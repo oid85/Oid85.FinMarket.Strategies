@@ -21,7 +21,7 @@ class CloseCrossSma_Long_D(bt.Strategy):
     def log(self, message, dt=None, logging=False):
         if self.params.logging or logging:
             dt = dt or self.datas[0].datetime.date(0)
-            print('{0},TestStrategy,{1}'.format(dt.isoformat(), message))
+            print('{0}, {1}'.format(dt.isoformat(), message))
 
     def notify_order(self, order):
         if order.status in [order.Submitted, order.Accepted]:
@@ -29,10 +29,10 @@ class CloseCrossSma_Long_D(bt.Strategy):
 
         if order.status in [order.Completed]:
             if order.isbuy():
-                self.log(f'LONG - PRICE: {order.executed.price} SIZE: {order.executed.size} COST: {order.executed.value} COMM: {order.executed.comm}')
+                self.log(f'LONG PRICE={order.executed.price} SIZE={order.executed.size} COST={order.executed.value}')
 
             else:
-                self.log(f'SHORT - PRICE: {order.executed.price} SIZE: {order.executed.size} COST: {order.executed.value} COMM: {order.executed.comm}')
+                self.log(f'SHORT PRICE={order.executed.price} SIZE={order.executed.size} COST={order.executed.value}')
 
         elif order.status in [order.Canceled, order.Margin, order.Rejected]:
             self.log('Order Canceled/Margin/Rejected')
