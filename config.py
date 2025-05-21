@@ -1,4 +1,5 @@
 from strategies.CloseCrossSma_Long_D import CloseCrossSma_Long_D
+from strategies.HmaInclination_Long_D.HmaInclination_Long_D import HmaInclination_Long_D
 
 host = '26.147.25.39'
 port = 5432
@@ -23,7 +24,8 @@ optimization_result_filter = {
 }
 
 strategies = {
-    CloseCrossSma_Long_D: {'period': range(10, 50, 5), 'logging': False}
+    CloseCrossSma_Long_D: {'period': range(10, 50, 5), 'logging': False},
+    HmaInclination_Long_D: {'period': range(10, 50, 5), 'logging': False}
 }
 
 tickers = [
