@@ -1,4 +1,4 @@
-from strategies.CloseCrossSma_Long_D import CloseCrossSma_Long_D
+from strategies.CloseCrossSma_Long_D.CloseCrossSma_Long_D import CloseCrossSma_Long_D
 from strategies.HmaInclination_Long_D.HmaInclination_Long_D import HmaInclination_Long_D
 from strategies.Supertrend_Long_D.Supertrend_Long_D import Supertrend_Long_D
 
@@ -8,13 +8,13 @@ database = 'finmarket_prod'
 user = 'postgres'
 password = 'postgres'
 
-start_date = '2022-01-01'
+start_date = '2020-01-01'
 end_date = '2024-12-31'
 
-out_start_date = '2024-01-01'
+out_start_date = '2025-01-01'
 out_end_date = '2025-12-31'
 
-strategy_money = 1000000.0
+strategy_money = 100000.0
 percent_size = 50
 
 optimization_result_filter = {
@@ -25,9 +25,20 @@ optimization_result_filter = {
 }
 
 strategies = {
-    CloseCrossSma_Long_D: {'period': range(10, 50, 5), 'logging': False},
-    HmaInclination_Long_D: {'period': range(10, 50, 5), 'logging': False},
-    Supertrend_Long_D: {'period': range(10, 50, 5), 'multiplier': range(20, 30, 2), 'logging': False}
+    '208e13f2-7609-4d5c-832e-71fa75319c22': {
+        'strategy': CloseCrossSma_Long_D,
+        'params': {'period': range(10, 100, 5), 'logging': False}
+    },
+
+    '41b8cba8-8d1b-4a42-867b-03e798d888ad': {
+        'strategy': HmaInclination_Long_D,
+        'params': {'period': range(10, 100, 5), 'logging': False}
+    },
+
+    '1031b21c-1439-4a9c-aea3-f389039d157b': {
+        'strategy': Supertrend_Long_D,
+        'params': {'period': range(10, 100, 5), 'multiplier': range(20, 30, 2), 'logging': False}
+    }
 }
 
 tickers = [

@@ -1,6 +1,5 @@
 import backtrader as bt
 
-
 class Supertrend_Long_D(bt.Strategy):
     settings = {
         'id': '1031b21c-1439-4a9c-aea3-f389039d157b',
@@ -10,16 +9,26 @@ class Supertrend_Long_D(bt.Strategy):
 
     params = (
         ('period', 15),
-        ('multiplier', 2.5),
+        ('multiplier', 25),
         ('logging', False)
     )
 
     def __init__(self):
+        self.multiplier = self.params.period / 10.0
         self.close = self.datas[0].close
+        self.high = self.datas[0].high
+        self.low = self.datas[0].low
         self.order = None
+        self.index = 0
         self.highest = bt.indicators.Highest(self.datas[0], period=self.params.period)
         self.lowest = bt.indicators.Lowest(self.datas[0], period=self.params.period)
         self.atr = bt.indicators.AverageTrueRange(self.datas[0], period=self.params.period)
+        self.is_bullish = None
+        self.upper_band = None
+        self.lower_band = None
+        self.UpperBand = None
+        self.LowerBand = None
+        self.SuperTrend = None
 
     def log(self, message, dt=None, logging=False):
         if self.params.logging or logging:
@@ -43,32 +52,47 @@ class Supertrend_Long_D(bt.Strategy):
         self.order = None
 
     def next(self):
+        self.index += 1
+
         if self.order:
             return
 
-        mult = self.params.multiplier / 10.0
-        up = (self.highest[0] + self.lowest[0]) / 2.0 + self.atr[0] * mult
-        down = (self.highest[0] + self.lowest[0]) / 2.0 - self.atr[0] * mult
-        close = self.close[0]
+        if self.index >= self.params.period:
+            mid = (self.highest[0] + self.lowest[0]) / 2.0
+            atr = self.atr[0]
+            prev_close = self.close[-1]
 
-        current_trend_direction = None
-        supertrend = None
+            upper_eval = mid + (self.multiplier * atr)
+            lower_eval = mid - (self.multiplier * atr)
 
-        if close > up:
-            current_trend_direction = 1
-            supertrend = up
+            if self.index == self.params.period:
+                self.is_bullish = self.close[0] >= mid
+                self.upper_band = upper_eval
+                self.lower_band = lower_eval
 
-        if close < down:
-            current_trend_direction = -1
-            supertrend = down
+            if upper_eval < self.upper_band or prev_close > self.upper_band:
+                self.upper_band = upper_eval
 
-        signal_open_long = close > supertrend
-        signal_close_long = close < supertrend
+            if lower_eval > self.lower_band or prev_close < self.lower_band:
+                self.lower_band = lower_eval
 
-        if not self.position:
-            if signal_open_long:
-                self.order = self.buy()
+            if self.close[0] <= self.lower_band if self.is_bullish else self.upper_band:
+                self.SuperTrend = self.upper_band
+                self.UpperBand = self.upper_band
+                self.is_bullish = False
 
-        else:
-            if signal_close_long:
-                self.order = self.sell()
+            else:
+                self.SuperTrend = self.lower_band
+                self.LowerBand = self.lower_band
+                self.is_bullish = True
+
+            signal_open_long = self.close[0] > self.SuperTrend
+            signal_close_long = self.close[0] < self.SuperTrend
+
+            if not self.position:
+                if signal_open_long:
+                    self.order = self.buy()
+
+            else:
+                if signal_close_long:
+                    self.order = self.sell()

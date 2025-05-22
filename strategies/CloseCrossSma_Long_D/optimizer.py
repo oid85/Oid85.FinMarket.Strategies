@@ -16,5 +16,5 @@ if __name__ == '__main__':
     engine.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')
     engine.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
     engine.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
-    results = engine.run(maxcpus=1)
+    results = engine.run()
     dm.print_results(ticker, results)
