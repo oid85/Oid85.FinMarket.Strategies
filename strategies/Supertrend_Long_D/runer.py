@@ -9,7 +9,7 @@ if __name__ == '__main__':
     df = dm.get_daily_candles_by_ticker(ticker, config.start_date, config.end_date)
     data = bt.feeds.PandasData(dataname=df, datetime=0, open=1, high=2, low=3, close=4, volume=5, openinterest=-1)
     engine.adddata(data)
-    engine.addstrategy(Supertrend_Long_D, period=15, multiplier=2.5, logging=True)
+    engine.addstrategy(Supertrend_Long_D, period=15, multiplier=25, logging=True)
     engine.addsizer(bt.sizers.PercentSizer, percents=config.percent_size)
     engine.broker.setcash(config.strategy_money)
     engine.broker.setcommission(commission=0.0)

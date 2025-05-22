@@ -44,12 +44,12 @@ class CloseCrossSma_Long_D(bt.Strategy):
             return
 
         signal_open_long = self.close[0] > self.sma[0]
-        signal_open_long = self.close[0] < self.sma[0]
+        signal_close_long = self.close[0] < self.sma[0]
 
         if not self.position:
             if signal_open_long:
                 self.order = self.buy()
 
         else:
-            if signal_open_long:
+            if signal_close_long:
                 self.order = self.sell()

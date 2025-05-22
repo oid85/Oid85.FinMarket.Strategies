@@ -46,16 +46,29 @@ class Supertrend_Long_D(bt.Strategy):
         if self.order:
             return
 
-        up = (self.highest[0] + self.lowest[0]) / 2.0 + self.atr[0] * self.params.multiplier
-        down = (self.highest[0] + self.lowest[0]) / 2.0 - self.atr[0] * self.params.multiplier
+        mult = self.params.multiplier / 10.0
+        up = (self.highest[0] + self.lowest[0]) / 2.0 + self.atr[0] * mult
+        down = (self.highest[0] + self.lowest[0]) / 2.0 - self.atr[0] * mult
+        close = self.close[0]
 
-        signal_open_long = self.close[0] > down
-        signal_open_long = self.close[0] < down
+        current_trend_direction = None
+        supertrend = None
+
+        if close > up:
+            current_trend_direction = 1
+            supertrend = up
+
+        if close < down:
+            current_trend_direction = -1
+            supertrend = down
+
+        signal_open_long = close > supertrend
+        signal_close_long = close < supertrend
 
         if not self.position:
             if signal_open_long:
                 self.order = self.buy()
 
         else:
-            if signal_open_long:
+            if signal_close_long:
                 self.order = self.sell()

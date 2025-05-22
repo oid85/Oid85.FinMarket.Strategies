@@ -27,7 +27,7 @@ optimization_result_filter = {
 strategies = {
     CloseCrossSma_Long_D: {'period': range(10, 50, 5), 'logging': False},
     HmaInclination_Long_D: {'period': range(10, 50, 5), 'logging': False},
-    Supertrend_Long_D: {'period': range(10, 50, 5), multiplier=range(2.0, 3.0, 0.2), 'logging': False}
+    Supertrend_Long_D: {'period': range(10, 50, 5), 'multiplier': range(20, 30, 2), 'logging': False}
 }
 
 tickers = [
