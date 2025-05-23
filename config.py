@@ -13,12 +13,13 @@ database = 'finmarket_prod'
 user = 'postgres'
 password = 'postgres'
 
-optimization_window_in_months = 36
-backtest_window_in_months = 6
+optimization_window_in_months = 48
+backtest_window_in_months = 12
+stabilization_period_in_months = 3
 today = datetime.datetime.today()
-optimization_start_date = today - relativedelta(months=backtest_window_in_months + optimization_window_in_months)
+optimization_start_date = today - relativedelta(months=backtest_window_in_months + optimization_window_in_months + stabilization_period_in_months)
 optimization_end_date = today - relativedelta(months=backtest_window_in_months)
-backtest_start_date = today - relativedelta(months=backtest_window_in_months)
+backtest_start_date = today - relativedelta(months=backtest_window_in_months + stabilization_period_in_months)
 backtest_end_date = today
 
 '''
@@ -52,7 +53,7 @@ strategies = {
 
     '1031b21c-1439-4a9c-aea3-f389039d157b': {
         'strategy': Supertrend_Long_D,
-        'params': {'period': range(10, 100, 5), 'multiplier': range(20, 30, 2), 'logging': False}
+        'params': {'period': range(10, 100, 5), 'multiplier': range(20, 35, 5), 'logging': False}
     },
 
     '5c188831-8cea-43f6-b3d1-9ced5505ce8d': {

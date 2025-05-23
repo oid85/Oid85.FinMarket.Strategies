@@ -17,6 +17,7 @@ class HmaInclination_Long_D(bt.Strategy):
     def __init__(self):
         self.close = self.datas[0].close
         self.order = None
+        self.index = 0
         self.hma = bt.indicators.HullMovingAverage(self.datas[0], period=self.params.period)
 
     def log(self, message, dt=None, logging=False):
@@ -41,16 +42,19 @@ class HmaInclination_Long_D(bt.Strategy):
         self.order = None
 
     def next(self):
+        self.index += 1
+
         if self.order:
             return
 
-        signal_open_long = self.hma[-1] < self.hma[0]
-        signal_close_long = self.hma[-1] > self.hma[0]
+        if self.index >= self.params.period:
+            signal_open_long = self.hma[-1] < self.hma[0]
+            signal_close_long = self.hma[-1] > self.hma[0]
 
-        if not self.position:
-            if signal_open_long:
-                self.order = self.buy()
+            if not self.position:
+                if signal_open_long:
+                    self.order = self.buy()
 
-        else:
-            if signal_close_long:
-                self.order = self.sell()
+            else:
+                if signal_close_long:
+                    self.order = self.sell()
