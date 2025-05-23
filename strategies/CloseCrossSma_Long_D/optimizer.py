@@ -6,7 +6,7 @@ from strategies.CloseCrossSma_Long_D.CloseCrossSma_Long_D import CloseCrossSma_L
 if __name__ == '__main__':
     ticker = 'SBER'
     engine = bt.Cerebro()
-    df = dm.get_daily_candles_by_ticker(ticker, config.start_date, config.end_date)
+    df = dm.get_daily_candles_by_ticker(ticker, config.optimization_start_date, config.optimization_end_date)
     data = bt.feeds.PandasData(dataname=df, datetime=0, open=1, high=2, low=3, close=4, volume=5, openinterest=-1)
     engine.adddata(data)
     engine.optstrategy(CloseCrossSma_Long_D, period=range(10, 50, 5), logging=False)

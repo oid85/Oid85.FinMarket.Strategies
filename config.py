@@ -1,6 +1,11 @@
+import datetime
+from dateutil.relativedelta import relativedelta
+
 from strategies.CloseCrossSma_Long_D.CloseCrossSma_Long_D import CloseCrossSma_Long_D
 from strategies.HmaInclination_Long_D.HmaInclination_Long_D import HmaInclination_Long_D
 from strategies.Supertrend_Long_D.Supertrend_Long_D import Supertrend_Long_D
+from strategies.HighLowClassic_Long_D.HighLowClassic_Long_D import HighLowClassic_Long_D
+from strategies.HighLowMiddle_Long_D.HighLowMiddle_Long_D import HighLowMiddle_Long_D
 
 host = '26.147.25.39'
 port = 5432
@@ -8,8 +13,21 @@ database = 'finmarket_prod'
 user = 'postgres'
 password = 'postgres'
 
-start_date = '2022-01-01'
-end_date = '2025-12-31'
+optimization_window_in_months = 36
+backtest_window_in_months = 6
+today = datetime.datetime.today()
+optimization_start_date = today - relativedelta(months=backtest_window_in_months + optimization_window_in_months)
+optimization_end_date = today - relativedelta(months=backtest_window_in_months)
+backtest_start_date = today - relativedelta(months=backtest_window_in_months)
+backtest_end_date = today
+
+'''
+optimization_start_date = '2022-01-01'
+optimization_end_date = '2025-12-31'
+
+backtest_start_date = '2022-01-01'
+backtest_end_date = '2025-12-31'
+'''
 
 portfolio_money = 1000000.0
 percent_size = 50
@@ -35,6 +53,16 @@ strategies = {
     '1031b21c-1439-4a9c-aea3-f389039d157b': {
         'strategy': Supertrend_Long_D,
         'params': {'period': range(10, 100, 5), 'multiplier': range(20, 30, 2), 'logging': False}
+    },
+
+    '5c188831-8cea-43f6-b3d1-9ced5505ce8d': {
+        'strategy': HighLowClassic_Long_D,
+        'params': {'period': range(10, 100, 5), 'logging': False}
+    },
+
+    'cf264e4d-f3b8-414a-9975-3ccf1bcacbd5': {
+        'strategy': HighLowMiddle_Long_D,
+        'params': {'period': range(10, 100, 5), 'logging': False}
     }
 }
 

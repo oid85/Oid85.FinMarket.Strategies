@@ -13,7 +13,7 @@ if __name__ == '__main__':
         strategy = strategies[key]['strategy']
         params = strategies[key]['params']
         engine = bt.Cerebro()
-        df = dm.get_daily_candles_by_ticker(strategies[key]['ticker'], config.start_date, config.end_date)
+        df = dm.get_daily_candles_by_ticker(strategies[key]['ticker'], config.backtest_start_date, config.backtest_end_date)
         data = bt.feeds.PandasData(dataname=df, datetime=0, open=1, high=2, low=3, close=4, volume=5, openinterest=-1)
         engine.adddata(data)
         engine.addstrategy(strategy, **params)
