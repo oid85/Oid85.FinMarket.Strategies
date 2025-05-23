@@ -1,8 +1,10 @@
 import backtrader as bt
 
+
 class CloseCrossSma_Long_D(bt.Strategy):
     settings = {
         'id': '208e13f2-7609-4d5c-832e-71fa75319c22',
+        'description': 'Цена закрытия выше SMA',
         'version': 1,
         'timeframe': 'D'
     }

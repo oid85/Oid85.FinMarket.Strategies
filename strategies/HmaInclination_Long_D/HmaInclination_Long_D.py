@@ -1,8 +1,10 @@
 import backtrader as bt
 
+
 class HmaInclination_Long_D(bt.Strategy):
     settings = {
         'id': '41b8cba8-8d1b-4a42-867b-03e798d888ad',
+        'description': 'Угол наклона HMA',
         'version': 1,
         'timeframe': 'D'
     }

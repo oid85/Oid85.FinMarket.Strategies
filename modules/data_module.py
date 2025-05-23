@@ -97,6 +97,7 @@ def save_results(ticker, settings, results, table_name):
 
     strategy_version = settings['version']
     strategy_id = settings['id']
+    strategy_description = settings['description']
     strategy_timeframe = settings['timeframe']
 
     for result in results:
@@ -122,12 +123,12 @@ def save_results(ticker, settings, results, table_name):
             datetime_min = datetime.datetime(1, 1, 1, 0, 0, 0).isoformat()
 
             sql = (f"insert into storage.{table_name} ("
-                   f"ticker, timeframe, strategy_id, strategy_version, "
+                   f"ticker, timeframe, strategy_id, strategy_description, strategy_version, "
                    f"strategy_params, strategy_params_hash, total, total_open, total_closed, "
                    f"streak_won_longest, streak_lost_longest, pnl_net_total, pnl_net_average, "
                    f"max_drawdown_percent, profit_factor, recovery_factor, sharp_ratio, "
                    f"created_at, updated_at, deleted_at, is_deleted) "
-                   f"values('{ticker}', '{strategy_timeframe}', '{strategy_id}', {strategy_version}, "
+                   f"values('{ticker}', '{strategy_timeframe}', '{strategy_id}', '{strategy_description}', {strategy_version}, "
                    f"'{strategy_params}', '{strategy_params_hash}', {total}, {total_open}, {total_closed}, "
                    f"{streak_won_longest}, {streak_lost_longest}, {pnl_net_total}, {pnl_net_average}, "
                    f"{max_drawdown_percent}, {profit_factor}, {recovery_factor}, {sharp_ratio}, "
@@ -182,13 +183,6 @@ def save_backtest_results(ticker, settings, results):
     save_results(ticker, settings, results, 'backtest_results')
 
 
-def get_strategy_by_id(strategy_id):
-    for strategy in config.strategies.keys():
-        if strategy.settings['id'] == strategy_id:
-            return strategy
-    return None
-
-
 def get_backtest_strategies():
     '''Получение стратегий для бэктеста'''
     backtest_strategies = {}
@@ -197,7 +191,7 @@ def get_backtest_strategies():
 
     for i, row in df.iterrows():
         ticker = row['ticker']
-        strategy = get_strategy_by_id(row['strategy_id'])
+        strategy = config.strategies[row['strategy_id']]['strategy']
         params = row['strategy_params']
         strategy_data = {'strategy': strategy, 'ticker': ticker, 'params': params}
         backtest_strategies[row['id']] = strategy_data

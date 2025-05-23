@@ -11,7 +11,7 @@ if __name__ == '__main__':
     engine.adddata(data)
     engine.optstrategy(Supertrend_Long_D, period=range(10, 50, 5), multiplier=range(20, 30, 2), logging=False)
     engine.addsizer(bt.sizers.PercentSizer, percents=config.percent_size)
-    engine.broker.setcash(config.strategy_money)
+    engine.broker.setcash(config.portfolio_money)
     engine.broker.setcommission(commission=0.0)
     engine.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')
     engine.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')

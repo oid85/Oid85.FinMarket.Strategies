@@ -22,7 +22,7 @@ if __name__ == '__main__':
             engine.adddata(data)
             engine.optstrategy(strategy, **params)
             engine.addsizer(bt.sizers.PercentSizer, percents=config.percent_size)
-            engine.broker.setcash(config.strategy_money)
+            engine.broker.setcash(config.portfolio_money)
             engine.broker.setcommission(commission=0.0)
             engine.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')
             engine.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')

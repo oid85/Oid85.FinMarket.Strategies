@@ -1,8 +1,10 @@
 import backtrader as bt
 
+
 class Supertrend_Long_D(bt.Strategy):
     settings = {
         'id': '1031b21c-1439-4a9c-aea3-f389039d157b',
+        'description': 'Супертренд',
         'version': 1,
         'timeframe': 'D'
     }

@@ -9,12 +9,9 @@ user = 'postgres'
 password = 'postgres'
 
 start_date = '2020-01-01'
-end_date = '2024-12-31'
+end_date = '2025-12-31'
 
-out_start_date = '2025-01-01'
-out_end_date = '2025-12-31'
-
-strategy_money = 100000.0
+portfolio_money = 1000000.0
 percent_size = 50
 
 optimization_result_filter = {
