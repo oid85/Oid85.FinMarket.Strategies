@@ -17,7 +17,12 @@ if __name__ == '__main__':
             strategy = config.strategies[key]['strategy']
             params = config.strategies[key]['params']
             engine = bt.Cerebro()
-            df = dm.get_daily_candles_by_ticker(ticker, config.optimization_start_date, config.optimization_end_date)
+
+            if strategy.settings['timeframe'] == 'D':
+                df = dm.get_daily_candles_by_ticker(ticker, config.optimization_start_date, config.optimization_end_date)
+            elif strategy.settings['timeframe'] == 'H':
+                df = dm.get_daily_candles_by_ticker(ticker, config.optimization_start_date, config.optimization_end_date)
+
             data = bt.feeds.PandasData(dataname=df, datetime=0, open=1, high=2, low=3, close=4, volume=5, openinterest=-1)
             engine.adddata(data)
             engine.optstrategy(strategy, **params)
