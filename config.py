@@ -8,7 +8,7 @@ database = 'finmarket_prod'
 user = 'postgres'
 password = 'postgres'
 
-start_date = '2020-01-01'
+start_date = '2022-01-01'
 end_date = '2025-12-31'
 
 portfolio_money = 1000000.0
