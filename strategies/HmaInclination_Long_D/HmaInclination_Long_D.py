@@ -1,5 +1,7 @@
 import backtrader as bt
 
+import config
+
 
 class HmaInclination_Long_D(bt.Strategy):
     settings = {
@@ -47,7 +49,7 @@ class HmaInclination_Long_D(bt.Strategy):
         if self.order:
             return
 
-        if self.index >= self.params.period:
+        if self.index >= config.stabilization_period_in_candles:
             signal_open_long = self.hma[-1] < self.hma[0]
             signal_close_long = self.hma[-1] > self.hma[0]
 

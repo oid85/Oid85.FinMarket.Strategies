@@ -7,12 +7,12 @@ import hashlib
 import warnings
 warnings.simplefilter(action='ignore', category=UserWarning)
 
+
 def get_database_connection():
     return ps.connect(host=config.host, port=config.port, database=config.database, user=config.user, password=config.password)
 
-def get_daily_candles_by_ticker(ticker, start_date, end_date):
-    '''Получение дневных свечей по тикеру'''
 
+def get_daily_candles_by_ticker(ticker, start_date, end_date):
     connection = get_database_connection()
 
     sql = (f"select date as datetime, open, high, low, close, volume "
@@ -28,8 +28,23 @@ def get_daily_candles_by_ticker(ticker, start_date, end_date):
     return df
 
 
+def get_hourly_candles_by_ticker(ticker, start_date, end_date):
+    connection = get_database_connection()
+
+    sql = (f"select concat(date, ' ', time) as datetime, open, high, low, close, volume "
+           f"from storage.hourly_candles "
+           f"where instrument_id in (select instrument_id from public.instruments where ticker = '{ticker}') "
+           f"and date >= '{start_date}' "
+           f"and date <= '{end_date}' "
+           f"order by datetime")
+
+    df = pd.read_sql(sql, con=connection, parse_dates={"datetime": {"format": "%Y-%m-%d %H:%M:%S"}})
+    connection.close()
+
+    return df
+
+
 def clear_optimization_result():
-    '''Очищение результатов оптимизации'''
     connection = get_database_connection()
     cursor = connection.cursor()
     sql = 'delete from storage.optimization_results'
@@ -40,7 +55,6 @@ def clear_optimization_result():
 
 
 def clear_backtest_result():
-    '''Очищение результатов бэктеста'''
     connection = get_database_connection()
     cursor = connection.cursor()
     sql = 'delete from storage.backtest_results'
@@ -51,7 +65,6 @@ def clear_backtest_result():
 
 
 def clear_strategy_signals():
-    '''Очищение таблицы позиций'''
     connection = get_database_connection()
     cursor = connection.cursor()
 
@@ -91,7 +104,6 @@ def get_good_optimization_results():
 
 
 def save_results(ticker, settings, results, table_name):
-    '''Сохранение результатов оптимизации'''
     connection = get_database_connection()
     cursor = connection.cursor()
 
@@ -145,7 +157,6 @@ def save_results(ticker, settings, results, table_name):
 
 
 def print_results(ticker, results):
-    '''Печать результатов оптимизации'''
     for result in results:
         try:
             sharpe = result[0].analyzers.sharpe.get_analysis()
@@ -184,7 +195,6 @@ def save_backtest_results(ticker, settings, results):
 
 
 def get_backtest_strategies():
-    '''Получение стратегий для бэктеста'''
     backtest_strategies = {}
 
     df = get_good_optimization_results()
@@ -200,7 +210,6 @@ def get_backtest_strategies():
 
 
 def save_strategy_signals():
-    '''Расчет позиций инструментов на основе данных бэктеста'''
     connection = get_database_connection()
     cursor = connection.cursor()
 

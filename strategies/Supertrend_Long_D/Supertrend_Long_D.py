@@ -1,5 +1,7 @@
 import backtrader as bt
 
+import config
+
 
 class Supertrend_Long_D(bt.Strategy):
     settings = {
@@ -59,7 +61,7 @@ class Supertrend_Long_D(bt.Strategy):
         if self.order:
             return
 
-        if self.index >= self.params.period:
+        if self.index >= config.stabilization_period_in_candles:
             mid = (self.highest[0] + self.lowest[0]) / 2.0
             atr = self.atr[0]
             prev_close = self.close[-1]

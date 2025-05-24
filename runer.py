@@ -15,10 +15,10 @@ if __name__ == '__main__':
         engine = bt.Cerebro()
 
         if strategy.settings['timeframe'] == 'D':
-            df = dm.get_daily_candles_by_ticker(strategies[key]['ticker'], config.backtest_start_date, config.backtest_end_date)
+            df = dm.get_daily_candles_by_ticker(strategies[key]['ticker'], config.daily_date_range['backtest_start_date'], config.daily_date_range['backtest_end_date'])
         elif strategy.settings['timeframe'] == 'H':
-            df = dm.get_daily_candles_by_ticker(strategies[key]['ticker'], config.backtest_start_date, config.backtest_end_date)
-            
+            df = dm.get_hourly_candles_by_ticker(strategies[key]['ticker'], config.hourly_date_range['backtest_start_date'], config.hourly_date_range['backtest_end_date'])
+
         data = bt.feeds.PandasData(dataname=df, datetime=0, open=1, high=2, low=3, close=4, volume=5, openinterest=-1)
         engine.adddata(data)
         engine.addstrategy(strategy, **params)

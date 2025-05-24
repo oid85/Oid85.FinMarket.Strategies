@@ -6,7 +6,7 @@ from strategies.Supertrend_Long_D.Supertrend_Long_D import Supertrend_Long_D
 if __name__ == '__main__':
     ticker = 'SBER'
     engine = bt.Cerebro()
-    df = dm.get_daily_candles_by_ticker(ticker, config.backtest_start_date, config.backtest_end_date)
+    df = dm.get_daily_candles_by_ticker(ticker, config.daily_date_range['backtest_start_date'], config.daily_date_range['backtest_end_date'])
     data = bt.feeds.PandasData(dataname=df, datetime=0, open=1, high=2, low=3, close=4, volume=5, openinterest=-1)
     engine.adddata(data)
     engine.addstrategy(Supertrend_Long_D, period=15, multiplier=25, logging=True)

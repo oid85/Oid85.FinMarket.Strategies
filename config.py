@@ -1,5 +1,5 @@
 import datetime
-from dateutil.relativedelta import relativedelta
+from datetime import timedelta
 
 from strategies.CloseCrossSma_Long_D.CloseCrossSma_Long_D import CloseCrossSma_Long_D
 from strategies.HmaInclination_Long_D.HmaInclination_Long_D import HmaInclination_Long_D
@@ -13,22 +13,26 @@ database = 'finmarket_prod'
 user = 'postgres'
 password = 'postgres'
 
-optimization_window_in_months = 48
-backtest_window_in_months = 12
-stabilization_period_in_months = 3
+stabilization_period_in_candles = 100
+optimization_window_in_days = 3 * 365
+backtest_window_in_days = 180
+daily_stabilization_period_in_days = 150
+hourly_stabilization_period_in_days = 15
 today = datetime.datetime.today()
-optimization_start_date = today - relativedelta(months=backtest_window_in_months + optimization_window_in_months + stabilization_period_in_months)
-optimization_end_date = today - relativedelta(months=backtest_window_in_months)
-backtest_start_date = today - relativedelta(months=backtest_window_in_months + stabilization_period_in_months)
-backtest_end_date = today
 
-'''
-optimization_start_date = '2022-01-01'
-optimization_end_date = '2025-12-31'
+daily_date_range = {
+    'optimization_start_date': (today - timedelta(days=backtest_window_in_days) - timedelta(days=optimization_window_in_days) - timedelta(days=daily_stabilization_period_in_days)).date(),
+    'optimization_end_date': (today - timedelta(days=backtest_window_in_days)).date(),
+    'backtest_start_date': (today - timedelta(days=backtest_window_in_days) - timedelta(days=daily_stabilization_period_in_days)).date(),
+    'backtest_end_date': today.date()
+}
 
-backtest_start_date = '2022-01-01'
-backtest_end_date = '2025-12-31'
-'''
+hourly_date_range = {
+    'optimization_start_date': (today - timedelta(days=backtest_window_in_days) - timedelta(days=optimization_window_in_days) - timedelta(days=hourly_stabilization_period_in_days)).date(),
+    'optimization_end_date': (today - timedelta(days=backtest_window_in_days)).date(),
+    'backtest_start_date': (today - timedelta(days=backtest_window_in_days) - timedelta(days=hourly_stabilization_period_in_days)).date(),
+    'backtest_end_date': today.date()
+}
 
 portfolio_money = 1000000.0
 percent_size = 50

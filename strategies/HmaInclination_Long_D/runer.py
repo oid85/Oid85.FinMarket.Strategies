@@ -6,7 +6,7 @@ from strategies.HmaInclination_Long_D.HmaInclination_Long_D import HmaInclinatio
 if __name__ == '__main__':
     ticker = 'BSPB'
     engine = bt.Cerebro()
-    df = dm.get_daily_candles_by_ticker(ticker, config.backtest_start_date, config.backtest_end_date)
+    df = dm.get_daily_candles_by_ticker(ticker, config.daily_date_range['backtest_start_date'], config.daily_date_range['backtest_end_date'])
     data = bt.feeds.PandasData(dataname=df, datetime=0, open=1, high=2, low=3, close=4, volume=5, openinterest=-1)
     engine.adddata(data)
     engine.addstrategy(HmaInclination_Long_D, period=40, logging=True)

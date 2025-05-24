@@ -1,5 +1,7 @@
 import backtrader as bt
 
+import config
+
 
 class HighLowClassic_Long_D(bt.Strategy):
     settings = {
@@ -50,7 +52,7 @@ class HighLowClassic_Long_D(bt.Strategy):
         if self.order:
             return
 
-        if self.index >= self.params.period:
+        if self.index >= config.stabilization_period_in_candles:
             signal_open_long = self.close[0] > self.highest[-1]
             signal_close_long = self.close[0] < self.lowest[0]
 
