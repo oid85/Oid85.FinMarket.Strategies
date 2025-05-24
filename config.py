@@ -52,27 +52,27 @@ backtest_result_filter = {
 strategies = {
     '208e13f2-7609-4d5c-832e-71fa75319c22': {
         'strategy': CloseCrossSma_Long_D,
-        'params': {'period': range(10, 100, 5), 'logging': False}
+        'params': {'period': range(10, 70, 5), 'logging': False}
     },
 
     '41b8cba8-8d1b-4a42-867b-03e798d888ad': {
         'strategy': HmaInclination_Long_D,
-        'params': {'period': range(10, 100, 5), 'logging': False}
+        'params': {'period': range(10, 70, 5), 'logging': False}
     },
 
     '1031b21c-1439-4a9c-aea3-f389039d157b': {
         'strategy': Supertrend_Long_D,
-        'params': {'period': range(10, 100, 5), 'multiplier': range(20, 35, 5), 'logging': False}
+        'params': {'period': range(10, 70, 5), 'multiplier': range(20, 35, 5), 'logging': False}
     },
 
     '5c188831-8cea-43f6-b3d1-9ced5505ce8d': {
         'strategy': HighLowClassic_Long_D,
-        'params': {'period': range(10, 100, 5), 'logging': False}
+        'params': {'period': range(10, 70, 5), 'logging': False}
     },
 
     'cf264e4d-f3b8-414a-9975-3ccf1bcacbd5': {
         'strategy': HighLowMiddle_Long_D,
-        'params': {'period': range(10, 100, 5), 'logging': False}
+        'params': {'period': range(10, 70, 5), 'logging': False}
     }
 }
 
