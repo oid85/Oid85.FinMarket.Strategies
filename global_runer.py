@@ -28,6 +28,7 @@ if __name__ == '__main__':
         engine.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')
         engine.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
         engine.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
+        engine.addanalyzer(bt.analyzers.Returns, _name='returns')
         result = engine.run()
         dm.save_backtest_results(strategies[key]['ticker'], strategies[key]['strategy'].settings, [result])
 

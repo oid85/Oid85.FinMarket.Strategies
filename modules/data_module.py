@@ -177,6 +177,8 @@ def print_results(ticker, results):
             sharpe = result[0].analyzers.sharpe.get_analysis()
             drawdown = result[0].analyzers.drawdown.get_analysis()
             trades = result[0].analyzers.trades.get_analysis()
+            returns = result[0].analyzers.returns.get_analysis()
+
             strategy_params = json.dumps(result[0].p._getkwargs())
             total = trades.total.total
             pnl_net_total = trades.pnl.net.total
@@ -185,6 +187,7 @@ def print_results(ticker, results):
             profit_factor = abs(trades.won.pnl.total / trades.lost.pnl.total)
             recovery_factor = trades.pnl.net.total / drawdown.max.moneydown
             sharp_ratio = sharpe['sharperatio']
+            annualized_norm_return_percent = returns['rnorm100']
 
             message = (f"'{ticker}' '{strategy_params}' "
                        f"total={total} "
@@ -193,7 +196,8 @@ def print_results(ticker, results):
                        f"max_drawdown_percent={round(max_drawdown_percent, 2)} "
                        f"profit_factor={round(profit_factor, 2)} "
                        f"recovery_factor={round(recovery_factor, 2)} "
-                       f"sharp_ratio={round(sharp_ratio, 2)}")
+                       f"sharp_ratio={round(sharp_ratio, 2)} " 
+                       f"annualized_norm_return_percent={round(annualized_norm_return_percent, 2)} ")
 
             print(message)
 
