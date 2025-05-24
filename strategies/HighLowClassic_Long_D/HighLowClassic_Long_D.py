@@ -54,7 +54,7 @@ class HighLowClassic_Long_D(bt.Strategy):
 
         if self.index >= config.stabilization_period_in_candles:
             signal_open_long = self.close[0] > self.highest[-1]
-            signal_close_long = self.close[0] < self.lowest[0]
+            signal_close_long = self.close[0] < self.lowest[-1]
 
             if not self.position:
                 if signal_open_long:

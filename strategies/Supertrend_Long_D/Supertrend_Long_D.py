@@ -69,7 +69,7 @@ class Supertrend_Long_D(bt.Strategy):
             upper_eval = mid + (self.multiplier * atr)
             lower_eval = mid - (self.multiplier * atr)
 
-            if self.index == self.params.period:
+            if self.index == config.stabilization_period_in_candles:
                 self.is_bullish = self.close[0] >= mid
                 self.upper_band = upper_eval
                 self.lower_band = lower_eval
