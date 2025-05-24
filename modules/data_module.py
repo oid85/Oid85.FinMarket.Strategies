@@ -92,10 +92,25 @@ def get_good_optimization_results():
     sql = (f"select id, ticker, strategy_id, strategy_params, "
            f"sharp_ratio, profit_factor, recovery_factor, max_drawdown_percent "
            f"from storage.optimization_results " 
-           f"where sharp_ratio >= {config.optimization_result_filter['sharp_ratio']} " 
-           f"and profit_factor >= {config.optimization_result_filter['profit_factor']} " 
+           f"where profit_factor >= {config.optimization_result_filter['profit_factor']} " 
            f"and recovery_factor >= {config.optimization_result_filter['recovery_factor']} " 
            f"and max_drawdown_percent <= {config.optimization_result_filter['max_drawdown_percent']}")
+
+    df = pd.read_sql(sql, con=connection)
+    connection.close()
+
+    return df
+
+
+def get_good_backtest_results():
+    connection = get_database_connection()
+
+    sql = (f"select id, ticker, strategy_id, strategy_params, "
+           f"sharp_ratio, profit_factor, recovery_factor, max_drawdown_percent "
+           f"from storage.backtest_results " 
+           f"where profit_factor >= {config.backtest_result_filter['profit_factor']} " 
+           f"and recovery_factor >= {config.backtest_result_filter['recovery_factor']} " 
+           f"and max_drawdown_percent <= {config.backtest_result_filter['max_drawdown_percent']}")
 
     df = pd.read_sql(sql, con=connection)
     connection.close()
@@ -216,7 +231,13 @@ def save_strategy_signals():
     for ticker in config.tickers:
         cursor.execute(
             f"update storage.strategy_signals "
-            f"set position = coalesce((select sum(total_open) from storage.backtest_results where ticker = '{ticker}'), 0) "
+            f"set position = coalesce(("
+            f"  select sum(total_open) "
+            f"  from storage.backtest_results "
+            f"  where ticker = '{ticker}' "
+            f"  and profit_factor >= {config.backtest_result_filter['profit_factor']} "
+            f"  and recovery_factor >= {config.backtest_result_filter['recovery_factor']} "
+            f"  and max_drawdown_percent <= {config.backtest_result_filter['max_drawdown_percent']}), 0) "
             f"where ticker = '{ticker}'")
 
     connection.commit()

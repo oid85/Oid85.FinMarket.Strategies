@@ -38,9 +38,14 @@ portfolio_money = 1000000.0
 percent_size = 50
 
 optimization_result_filter = {
-    'sharp_ratio': 2.0,
-    'profit_factor': 2.0,
-    'recovery_factor': 2.0,
+    'profit_factor': 3.0,
+    'recovery_factor': 3.0,
+    'max_drawdown_percent': 20.0,
+}
+
+backtest_result_filter = {
+    'profit_factor': 0.0,
+    'recovery_factor': 0.0,
     'max_drawdown_percent': 20.0,
 }
 
