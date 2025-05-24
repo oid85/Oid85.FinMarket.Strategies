@@ -16,8 +16,8 @@ password = 'postgres'
 stabilization_period_in_candles = 100
 optimization_window_in_days = 3 * 365
 backtest_window_in_days = 180
-daily_stabilization_period_in_days = 150
-hourly_stabilization_period_in_days = 15
+daily_stabilization_period_in_days = 200
+hourly_stabilization_period_in_days = 20
 today = datetime.datetime.today()
 
 daily_date_range = {
@@ -57,7 +57,7 @@ strategies = {
 
     '41b8cba8-8d1b-4a42-867b-03e798d888ad': {
         'strategy': HmaInclination_Long_D,
-        'params': {'period': range(10, 55, 5), 'logging': False}
+        'params': {'period': range(10, 55, 5), 'filter_period': range(70, 150, 5), 'logging': False}
     },
 
     '1031b21c-1439-4a9c-aea3-f389039d157b': {
