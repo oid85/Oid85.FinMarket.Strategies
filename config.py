@@ -34,7 +34,7 @@ hourly_date_range = {
     'backtest_end_date': today.date()
 }
 
-portfolio_money = 1000000.0
+portfolio_money = 100000.0
 percent_size = 50
 
 optimization_result_filter = {
