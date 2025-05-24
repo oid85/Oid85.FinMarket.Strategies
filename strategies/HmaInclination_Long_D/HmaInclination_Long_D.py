@@ -6,13 +6,14 @@ import config
 class HmaInclination_Long_D(bt.Strategy):
     settings = {
         'id': '41b8cba8-8d1b-4a42-867b-03e798d888ad',
-        'description': 'Угол наклона HMA',
+        'description': 'Угол наклона HMA. Фильтр EMA',
         'version': 1,
         'timeframe': 'D'
     }
 
     params = (
         ('period', 15),
+        ('filter_period', 70),
         ('logging', False)
     )
 
@@ -21,6 +22,7 @@ class HmaInclination_Long_D(bt.Strategy):
         self.order = None
         self.index = 0
         self.hma = bt.indicators.HullMovingAverage(self.datas[0], period=self.params.period)
+        self.filter_ema = bt.indicators.ExponentialMovingAverage(self.datas[0], period=self.params.filter_period)
 
     def log(self, message, dt=None, logging=False):
         if self.params.logging or logging:
@@ -50,8 +52,8 @@ class HmaInclination_Long_D(bt.Strategy):
             return
 
         if self.index >= config.stabilization_period_in_candles:
-            signal_open_long = self.hma[-1] < self.hma[0]
-            signal_close_long = self.hma[-1] > self.hma[0]
+            signal_open_long = self.close[0] > self.hma[0] and self.close[0] > self.filter_ema[0]
+            signal_close_long = self.close[0] < self.hma[0] or self.close[0] < self.filter_ema[0]
 
             if not self.position:
                 if signal_open_long:
