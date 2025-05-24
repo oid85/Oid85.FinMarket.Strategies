@@ -3,16 +3,17 @@ import backtrader as bt
 import config
 
 
-class CloseCrossSma_Long_D(bt.Strategy):
+class CloseCrossEma_Long_D(bt.Strategy):
     settings = {
         'id': '208e13f2-7609-4d5c-832e-71fa75319c22',
-        'description': 'Цена закрытия выше SMA',
+        'description': 'Цена закрытия выше EMA. Фильтр EMA',
         'version': 1,
         'timeframe': 'D'
     }
 
     params = (
         ('period', 15),
+        ('filter_period', 70),
         ('logging', False)
     )
 
@@ -20,7 +21,8 @@ class CloseCrossSma_Long_D(bt.Strategy):
         self.close = self.datas[0].close
         self.order = None
         self.index = 0
-        self.sma = bt.indicators.SimpleMovingAverage(self.datas[0], period=self.params.period)
+        self.ema = bt.indicators.ExponentialMovingAverage(self.datas[0], period=self.params.period)
+        self.filter_ema = bt.indicators.ExponentialMovingAverage(self.datas[0], period=self.params.filter_period)
 
     def log(self, message, dt=None, logging=False):
         if self.params.logging or logging:
@@ -50,8 +52,8 @@ class CloseCrossSma_Long_D(bt.Strategy):
             return
 
         if self.index >= config.stabilization_period_in_candles:
-            signal_open_long = self.close[0] > self.sma[0]
-            signal_close_long = self.close[0] < self.sma[0]
+            signal_open_long = self.close[0] > self.ema[0] and self.close[0] > self.filter_ema[0]
+            signal_close_long = self.close[0] < self.ema[0] or self.close[0] < self.filter_ema[0]
 
             if not self.position:
                 if signal_open_long:
