@@ -14,24 +14,27 @@ user = 'postgres'
 password = 'postgres'
 
 stabilization_period_in_candles = 100
+
 optimization_window_in_days = 3 * 365
-backtest_window_in_days = 180
+backtest_window_in_days = 3 * 365
+backtest_shift_in_days = 1 * 365
 daily_stabilization_period_in_days = 200
 hourly_stabilization_period_in_days = 20
-today = datetime.datetime.today()
+today = datetime.datetime.today().date()
+
 
 daily_date_range = {
-    'optimization_start_date': (today - timedelta(days=backtest_window_in_days) - timedelta(days=optimization_window_in_days) - timedelta(days=daily_stabilization_period_in_days)).date(),
-    'optimization_end_date': (today - timedelta(days=backtest_window_in_days)).date(),
-    'backtest_start_date': (today - timedelta(days=backtest_window_in_days) - timedelta(days=daily_stabilization_period_in_days)).date(),
-    'backtest_end_date': today.date()
+    'optimization_start_date': today - timedelta(days=optimization_window_in_days + daily_stabilization_period_in_days + backtest_shift_in_days),
+    'optimization_end_date': today - timedelta(days=backtest_shift_in_days),
+    'backtest_start_date': today - timedelta(days=backtest_window_in_days + daily_stabilization_period_in_days),
+    'backtest_end_date': today
 }
 
 hourly_date_range = {
-    'optimization_start_date': (today - timedelta(days=backtest_window_in_days) - timedelta(days=optimization_window_in_days) - timedelta(days=hourly_stabilization_period_in_days)).date(),
-    'optimization_end_date': (today - timedelta(days=backtest_window_in_days)).date(),
-    'backtest_start_date': (today - timedelta(days=backtest_window_in_days) - timedelta(days=hourly_stabilization_period_in_days)).date(),
-    'backtest_end_date': today.date()
+    'optimization_start_date': today - timedelta(days=optimization_window_in_days + hourly_stabilization_period_in_days + backtest_shift_in_days),
+    'optimization_end_date': today - timedelta(days=backtest_shift_in_days),
+    'backtest_start_date': today - timedelta(days=backtest_window_in_days + hourly_stabilization_period_in_days),
+    'backtest_end_date': today
 }
 
 portfolio_money = 100000.0
