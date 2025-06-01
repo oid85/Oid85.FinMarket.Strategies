@@ -6,12 +6,14 @@ import config
 import hashlib
 import warnings
 warnings.simplefilter(action='ignore', category=UserWarning)
+from functools import lru_cache
 
 
 def get_database_connection():
     return ps.connect(host=config.host, port=config.port, database=config.database, user=config.user, password=config.password)
 
 
+@lru_cache(maxsize=None)
 def get_daily_candles_by_ticker(ticker, start_date, end_date):
     connection = get_database_connection()
 
@@ -28,6 +30,7 @@ def get_daily_candles_by_ticker(ticker, start_date, end_date):
     return df
 
 
+@lru_cache(maxsize=None)
 def get_hourly_candles_by_ticker(ticker, start_date, end_date):
     connection = get_database_connection()
 
