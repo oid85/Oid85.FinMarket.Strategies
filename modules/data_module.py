@@ -135,6 +135,8 @@ def save_results(ticker, settings, results, table_name):
             sharpe = result[0].analyzers.sharpe.get_analysis()
             drawdown = result[0].analyzers.drawdown.get_analysis()
             trades = result[0].analyzers.trades.get_analysis()
+            returns = result[0].analyzers.returns.get_analysis()
+
             strategy_params = json.dumps(result[0].p._getkwargs())
             strategy_params_hash = hashlib.md5(strategy_params.encode()).hexdigest()
             total = trades.total.total
@@ -148,6 +150,8 @@ def save_results(ticker, settings, results, table_name):
             profit_factor = abs(trades.won.pnl.total / trades.lost.pnl.total)
             recovery_factor = trades.pnl.net.total / drawdown.max.moneydown
             sharp_ratio = sharpe['sharperatio']
+            total_return = returns['rtot']
+            annual_yield_return = returns['rnorm100']
 
             datetime_now = datetime.datetime.now().isoformat()
             datetime_min = datetime.datetime(1, 1, 1, 0, 0, 0).isoformat()
@@ -157,11 +161,13 @@ def save_results(ticker, settings, results, table_name):
                    f"strategy_params, strategy_params_hash, total, total_open, total_closed, "
                    f"streak_won_longest, streak_lost_longest, pnl_net_total, pnl_net_average, "
                    f"max_drawdown_percent, profit_factor, recovery_factor, sharp_ratio, "
+                   f"total_return, annual_yield_return, "
                    f"created_at, updated_at, deleted_at, is_deleted) "
                    f"values('{ticker}', '{strategy_timeframe}', '{strategy_id}', '{strategy_description}', {strategy_version}, "
                    f"'{strategy_params}', '{strategy_params_hash}', {total}, {total_open}, {total_closed}, "
                    f"{streak_won_longest}, {streak_lost_longest}, {pnl_net_total}, {pnl_net_average}, "
                    f"{max_drawdown_percent}, {profit_factor}, {recovery_factor}, {sharp_ratio}, "
+                   f"{total_return}, {annual_yield_return}, "
                    f"'{datetime_now}', '{datetime_min}', '{datetime_min}', false)")
 
             cursor.execute(sql)
@@ -190,7 +196,8 @@ def print_results(ticker, results):
             profit_factor = abs(trades.won.pnl.total / trades.lost.pnl.total)
             recovery_factor = trades.pnl.net.total / drawdown.max.moneydown
             sharp_ratio = sharpe['sharperatio']
-            annualized_norm_return_percent = returns['rnorm100']
+            total_return = returns['rtot']
+            annual_yield_return = returns['rnorm100']
 
             message = (f"'{ticker}' '{strategy_params}' "
                        f"total={total} "
@@ -199,8 +206,9 @@ def print_results(ticker, results):
                        f"max_drawdown_percent={round(max_drawdown_percent, 2)} "
                        f"profit_factor={round(profit_factor, 2)} "
                        f"recovery_factor={round(recovery_factor, 2)} "
-                       f"sharp_ratio={round(sharp_ratio, 2)} " 
-                       f"annualized_norm_return_percent={round(annualized_norm_return_percent, 2)} ")
+                       f"sharp_ratio={round(sharp_ratio, 2)} "
+                       f"total_return={round(total_return, 2)} "
+                       f"annual_yield_return={round(annual_yield_return, 2)} ")
 
             print(message)
 
